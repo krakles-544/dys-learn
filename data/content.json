@@ -1,0 +1,145 @@
+{
+  "english": {
+    "dragdrop": {
+      "1": [
+        { "word": "cat", "choices": [{ "id": "a", "emoji": "🐱" }, { "id": "b", "emoji": "🐶" }, { "id": "c", "emoji": "🐦" }], "answer": "a" },
+        { "word": "dog", "choices": [{ "id": "a", "emoji": "🐶" }, { "id": "b", "emoji": "🐱" }, { "id": "c", "emoji": "🐟" }], "answer": "a" },
+        { "word": "sun", "choices": [{ "id": "a", "emoji": "☀️" }, { "id": "b", "emoji": "🌙" }, { "id": "c", "emoji": "⭐" }], "answer": "a" },
+        { "word": "book", "choices": [{ "id": "a", "emoji": "📖" }, { "id": "b", "emoji": "✏️" }, { "id": "c", "emoji": "🎒" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "elephant", "choices": [{ "id": "a", "emoji": "🐘" }, { "id": "b", "emoji": "🦏" }, { "id": "c", "emoji": "🦓" }], "answer": "a" },
+        { "word": "bicycle", "choices": [{ "id": "a", "emoji": "🚲" }, { "id": "b", "emoji": "🚗" }, { "id": "c", "emoji": "✈️" }], "answer": "a" },
+        { "word": "umbrella", "choices": [{ "id": "a", "emoji": "☂️" }, { "id": "b", "emoji": "🧣" }, { "id": "c", "emoji": "🎂" }], "answer": "a" },
+        { "word": "butterfly", "choices": [{ "id": "a", "emoji": "🦋" }, { "id": "b", "emoji": "🐝" }, { "id": "c", "emoji": "🐞" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "telescope", "choices": [{ "id": "a", "emoji": "🔭" }, { "id": "b", "emoji": "📷" }, { "id": "c", "emoji": "🔎" }], "answer": "a" },
+        { "word": "waterfall", "choices": [{ "id": "a", "emoji": "🌊" }, { "id": "b", "emoji": "🏔️" }, { "id": "c", "emoji": "🌋" }], "answer": "a" },
+        { "word": "thermometer", "choices": [{ "id": "a", "emoji": "🌡️" }, { "id": "b", "emoji": "⏱️" }, { "id": "c", "emoji": "💊" }], "answer": "a" },
+        { "word": "helicopter", "choices": [{ "id": "a", "emoji": "🚁" }, { "id": "b", "emoji": "✈️" }, { "id": "c", "emoji": "🚀" }], "answer": "a" }
+      ]
+    },
+    "scramble": {
+      "1": ["cat", "dog", "sun", "hat", "cup", "pen"],
+      "3": ["apple", "tiger", "grape", "chair", "house", "plant"],
+      "5": ["mountain", "elephant", "umbrella", "dinosaur", "chocolate", "adventure"]
+    },
+    "dictation": {
+      "1": [
+        { "story": "The cat sat on the mat. It was a sunny day.", "keywords": ["cat", "sat", "mat", "sunny", "day"] },
+        { "story": "Tom has a red ball. He likes to play in the park.", "keywords": ["tom", "red", "ball", "play", "park"] }
+      ],
+      "3": [
+        { "story": "Maria walked her dog to the market. She bought fresh bread and a small basket of apples.", "keywords": ["maria", "dog", "market", "bread", "apples", "basket"] },
+        { "story": "The children built a sandcastle near the sea. Waves washed over their small tower and they laughed.", "keywords": ["children", "sandcastle", "sea", "waves", "tower", "laughed"] }
+      ],
+      "5": [
+        { "story": "During the school trip, the pupils visited a wildlife sanctuary where a ranger explained how elephants communicate using low rumbling sounds.", "keywords": ["school", "trip", "pupils", "wildlife", "sanctuary", "ranger", "elephants", "communicate", "rumbling"] },
+        { "story": "The old lighthouse keeper climbed the spiral staircase every evening to light the lamp so ships could navigate safely through the storm.", "keywords": ["lighthouse", "keeper", "spiral", "staircase", "lamp", "ships", "navigate", "storm"] }
+      ]
+    }
+  },
+  "math": {
+    "dragdrop": {
+      "1": [
+        { "word": "one", "choices": [{ "id": "a", "emoji": "🍎" }, { "id": "b", "emoji": "🍎🍎" }, { "id": "c", "emoji": "🍎🍎🍎" }], "answer": "a" },
+        { "word": "three", "choices": [{ "id": "a", "emoji": "⭐⭐⭐" }, { "id": "b", "emoji": "⭐⭐" }, { "id": "c", "emoji": "⭐⭐⭐⭐" }], "answer": "a" },
+        { "word": "four", "choices": [{ "id": "a", "emoji": "🎈🎈🎈🎈" }, { "id": "b", "emoji": "🎈🎈🎈" }, { "id": "c", "emoji": "🎈🎈🎈🎈🎈" }], "answer": "a" },
+        { "word": "five", "choices": [{ "id": "a", "emoji": "🐟🐟🐟🐟🐟" }, { "id": "b", "emoji": "🐟🐟🐟🐟" }, { "id": "c", "emoji": "🐟🐟🐟" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "seven", "choices": [{ "id": "a", "emoji": "7" }, { "id": "b", "emoji": "6" }, { "id": "c", "emoji": "8" }], "answer": "a" },
+        { "word": "nine", "choices": [{ "id": "a", "emoji": "9" }, { "id": "b", "emoji": "8" }, { "id": "c", "emoji": "10" }], "answer": "a" },
+        { "word": "six", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "7" }], "answer": "a" },
+        { "word": "ten", "choices": [{ "id": "a", "emoji": "10" }, { "id": "b", "emoji": "9" }, { "id": "c", "emoji": "11" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "fourteen", "choices": [{ "id": "a", "emoji": "14" }, { "id": "b", "emoji": "13" }, { "id": "c", "emoji": "15" }], "answer": "a" },
+        { "word": "eighteen", "choices": [{ "id": "a", "emoji": "18" }, { "id": "b", "emoji": "17" }, { "id": "c", "emoji": "19" }], "answer": "a" },
+        { "word": "twenty", "choices": [{ "id": "a", "emoji": "20" }, { "id": "b", "emoji": "19" }, { "id": "c", "emoji": "21" }], "answer": "a" },
+        { "word": "sixteen", "choices": [{ "id": "a", "emoji": "16" }, { "id": "b", "emoji": "15" }, { "id": "c", "emoji": "17" }], "answer": "a" }
+      ]
+    },
+    "addition": {
+      "1": [
+        { "word": "2 + 3", "choices": [{ "id": "a", "emoji": "5" }, { "id": "b", "emoji": "4" }, { "id": "c", "emoji": "6" }], "answer": "a" },
+        { "word": "1 + 4", "choices": [{ "id": "a", "emoji": "5" }, { "id": "b", "emoji": "6" }, { "id": "c", "emoji": "4" }], "answer": "a" },
+        { "word": "3 + 3", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "7" }], "answer": "a" },
+        { "word": "4 + 2", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "7" }, { "id": "c", "emoji": "5" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "7 + 6", "choices": [{ "id": "a", "emoji": "13" }, { "id": "b", "emoji": "12" }, { "id": "c", "emoji": "14" }], "answer": "a" },
+        { "word": "9 + 5", "choices": [{ "id": "a", "emoji": "14" }, { "id": "b", "emoji": "13" }, { "id": "c", "emoji": "15" }], "answer": "a" },
+        { "word": "8 + 7", "choices": [{ "id": "a", "emoji": "15" }, { "id": "b", "emoji": "14" }, { "id": "c", "emoji": "16" }], "answer": "a" },
+        { "word": "6 + 9", "choices": [{ "id": "a", "emoji": "15" }, { "id": "b", "emoji": "16" }, { "id": "c", "emoji": "14" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "23 + 15", "choices": [{ "id": "a", "emoji": "38" }, { "id": "b", "emoji": "37" }, { "id": "c", "emoji": "39" }], "answer": "a" },
+        { "word": "34 + 27", "choices": [{ "id": "a", "emoji": "61" }, { "id": "b", "emoji": "60" }, { "id": "c", "emoji": "62" }], "answer": "a" },
+        { "word": "45 + 38", "choices": [{ "id": "a", "emoji": "83" }, { "id": "b", "emoji": "82" }, { "id": "c", "emoji": "84" }], "answer": "a" },
+        { "word": "56 + 29", "choices": [{ "id": "a", "emoji": "85" }, { "id": "b", "emoji": "84" }, { "id": "c", "emoji": "86" }], "answer": "a" }
+      ]
+    },
+    "subtraction": {
+      "1": [
+        { "word": "5 - 2", "choices": [{ "id": "a", "emoji": "3" }, { "id": "b", "emoji": "2" }, { "id": "c", "emoji": "4" }], "answer": "a" },
+        { "word": "6 - 4", "choices": [{ "id": "a", "emoji": "2" }, { "id": "b", "emoji": "3" }, { "id": "c", "emoji": "1" }], "answer": "a" },
+        { "word": "7 - 3", "choices": [{ "id": "a", "emoji": "4" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "3" }], "answer": "a" },
+        { "word": "9 - 5", "choices": [{ "id": "a", "emoji": "4" }, { "id": "b", "emoji": "3" }, { "id": "c", "emoji": "5" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "15 - 7", "choices": [{ "id": "a", "emoji": "8" }, { "id": "b", "emoji": "7" }, { "id": "c", "emoji": "9" }], "answer": "a" },
+        { "word": "18 - 9", "choices": [{ "id": "a", "emoji": "9" }, { "id": "b", "emoji": "8" }, { "id": "c", "emoji": "10" }], "answer": "a" },
+        { "word": "14 - 6", "choices": [{ "id": "a", "emoji": "8" }, { "id": "b", "emoji": "9" }, { "id": "c", "emoji": "7" }], "answer": "a" },
+        { "word": "16 - 8", "choices": [{ "id": "a", "emoji": "8" }, { "id": "b", "emoji": "7" }, { "id": "c", "emoji": "9" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "50 - 23", "choices": [{ "id": "a", "emoji": "27" }, { "id": "b", "emoji": "26" }, { "id": "c", "emoji": "28" }], "answer": "a" },
+        { "word": "72 - 38", "choices": [{ "id": "a", "emoji": "34" }, { "id": "b", "emoji": "33" }, { "id": "c", "emoji": "35" }], "answer": "a" },
+        { "word": "84 - 46", "choices": [{ "id": "a", "emoji": "38" }, { "id": "b", "emoji": "37" }, { "id": "c", "emoji": "39" }], "answer": "a" },
+        { "word": "93 - 57", "choices": [{ "id": "a", "emoji": "36" }, { "id": "b", "emoji": "35" }, { "id": "c", "emoji": "37" }], "answer": "a" }
+      ]
+    },
+    "multiplication": {
+      "1": [
+        { "word": "2 × 3", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "7" }], "answer": "a" },
+        { "word": "3 × 2", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "7" }, { "id": "c", "emoji": "5" }], "answer": "a" },
+        { "word": "4 × 2", "choices": [{ "id": "a", "emoji": "8" }, { "id": "b", "emoji": "6" }, { "id": "c", "emoji": "9" }], "answer": "a" },
+        { "word": "5 × 1", "choices": [{ "id": "a", "emoji": "5" }, { "id": "b", "emoji": "4" }, { "id": "c", "emoji": "6" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "6 × 4", "choices": [{ "id": "a", "emoji": "24" }, { "id": "b", "emoji": "20" }, { "id": "c", "emoji": "28" }], "answer": "a" },
+        { "word": "7 × 3", "choices": [{ "id": "a", "emoji": "21" }, { "id": "b", "emoji": "18" }, { "id": "c", "emoji": "24" }], "answer": "a" },
+        { "word": "8 × 2", "choices": [{ "id": "a", "emoji": "16" }, { "id": "b", "emoji": "14" }, { "id": "c", "emoji": "18" }], "answer": "a" },
+        { "word": "9 × 3", "choices": [{ "id": "a", "emoji": "27" }, { "id": "b", "emoji": "24" }, { "id": "c", "emoji": "30" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "12 × 4", "choices": [{ "id": "a", "emoji": "48" }, { "id": "b", "emoji": "44" }, { "id": "c", "emoji": "52" }], "answer": "a" },
+        { "word": "15 × 3", "choices": [{ "id": "a", "emoji": "45" }, { "id": "b", "emoji": "42" }, { "id": "c", "emoji": "48" }], "answer": "a" },
+        { "word": "11 × 6", "choices": [{ "id": "a", "emoji": "66" }, { "id": "b", "emoji": "60" }, { "id": "c", "emoji": "72" }], "answer": "a" },
+        { "word": "13 × 5", "choices": [{ "id": "a", "emoji": "65" }, { "id": "b", "emoji": "60" }, { "id": "c", "emoji": "70" }], "answer": "a" }
+      ]
+    },
+    "division": {
+      "1": [
+        { "word": "6 ÷ 2", "choices": [{ "id": "a", "emoji": "3" }, { "id": "b", "emoji": "2" }, { "id": "c", "emoji": "4" }], "answer": "a" },
+        { "word": "8 ÷ 4", "choices": [{ "id": "a", "emoji": "2" }, { "id": "b", "emoji": "3" }, { "id": "c", "emoji": "1" }], "answer": "a" },
+        { "word": "10 ÷ 5", "choices": [{ "id": "a", "emoji": "2" }, { "id": "b", "emoji": "1" }, { "id": "c", "emoji": "3" }], "answer": "a" },
+        { "word": "9 ÷ 3", "choices": [{ "id": "a", "emoji": "3" }, { "id": "b", "emoji": "2" }, { "id": "c", "emoji": "4" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "24 ÷ 4", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "7" }], "answer": "a" },
+        { "word": "27 ÷ 3", "choices": [{ "id": "a", "emoji": "9" }, { "id": "b", "emoji": "8" }, { "id": "c", "emoji": "10" }], "answer": "a" },
+        { "word": "32 ÷ 8", "choices": [{ "id": "a", "emoji": "4" }, { "id": "b", "emoji": "3" }, { "id": "c", "emoji": "5" }], "answer": "a" },
+        { "word": "36 ÷ 6", "choices": [{ "id": "a", "emoji": "6" }, { "id": "b", "emoji": "5" }, { "id": "c", "emoji": "7" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "72 ÷ 8", "choices": [{ "id": "a", "emoji": "9" }, { "id": "b", "emoji": "8" }, { "id": "c", "emoji": "10" }], "answer": "a" },
+        { "word": "84 ÷ 7", "choices": [{ "id": "a", "emoji": "12" }, { "id": "b", "emoji": "11" }, { "id": "c", "emoji": "13" }], "answer": "a" },
+        { "word": "96 ÷ 6", "choices": [{ "id": "a", "emoji": "16" }, { "id": "b", "emoji": "15" }, { "id": "c", "emoji": "17" }], "answer": "a" },
+        { "word": "108 ÷ 9", "choices": [{ "id": "a", "emoji": "12" }, { "id": "b", "emoji": "11" }, { "id": "c", "emoji": "13" }], "answer": "a" }
+      ]
+    }
+  }
+}

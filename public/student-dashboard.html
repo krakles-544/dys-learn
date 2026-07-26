@@ -1,0 +1,90 @@
+<title>DysLearn — My Learning</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<div class="topbar">
+  <span>📚 DysLearn</span>
+  <a href="#" id="logout">Log Out</a>
+</div>
+
+<div class="page">
+  <h1 id="greeting">Welcome!</h1>
+
+  <div id="subjects" class="grid"></div>
+
+  <div class="card">
+    <h2>My Recent Activity</h2>
+    <table id="recent-table">
+      <thead><tr><th>Type</th><th>Score</th><th>Grade</th><th>When</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p id="no-activity" style="display:none;">No exercises attempted yet — pick a subject above to get started!</p>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  (async function init() {
+    const me = await requireAuth('student');
+    if (!me) return;
+    wireLogout('#logout');
+
+    const data = await api('/api/student/dashboard');
+    document.getElementById('greeting').textContent = `Welcome back, ${data.student.firstname}! 👋`;
+
+    const subjectsEl = document.getElementById('subjects');
+
+    const TYPE_LABELS = {
+      dragdrop: '🖼️ Picture Match',
+      scramble: '🔤 Word Scramble',
+      dictation: '🎧 Listen & Retell',
+      addition: '➕ Addition',
+      subtraction: '➖ Subtraction',
+      multiplication: '✖️ Multiplication',
+      division: '➗ Division'
+    };
+    // Which exercise types each subject offers, in display order. Curated rather
+    // than purely derived from `availableTypes` so retired types (e.g. Math's old
+    // Word Scramble/Listen & Retell content, kept in the DB only so past attempt
+    // history still resolves) don't resurface in the UI.
+    const SUBJECT_TYPES = {
+      'English/Literacy': ['dragdrop', 'scramble', 'dictation'],
+      'Math': ['dragdrop', 'addition', 'subtraction', 'multiplication', 'division']
+    };
+
+    for (const subject of data.subjects) {
+      const card = document.createElement('div');
+      card.className = 'card subject-card';
+      if (!subject.hasContent) {
+        card.innerHTML = `<h2>${subject.subject_name}</h2><p>${subject.subject_desc}</p><span class="badge" style="background:#6b6b6b;">Coming soon</span>`;
+        subjectsEl.appendChild(card);
+        continue;
+      }
+      const types = (SUBJECT_TYPES[subject.subject_name] || subject.availableTypes)
+        .filter((t) => subject.availableTypes.includes(t));
+      card.innerHTML = `
+        <h2>${subject.subject_name}</h2>
+        <span class="badge">Level ${subject.level} / 5</span>
+        ${types.map(t => `<button type="button" data-subject="${subject.subject_id}" data-type="${t}" class="pick-exercise">${TYPE_LABELS[t]}</button>`).join('')}
+      `;
+      subjectsEl.appendChild(card);
+    }
+
+    subjectsEl.querySelectorAll('.pick-exercise').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        window.location.href = `/exercise.html?subjectId=${btn.dataset.subject}&type=${btn.dataset.type}`;
+      });
+    });
+
+    const tbody = document.querySelector('#recent-table tbody');
+    if (data.recentAttempts.length === 0) {
+      document.getElementById('no-activity').style.display = 'block';
+    } else {
+      for (const a of data.recentAttempts) {
+        const tr = document.createElement('tr');
+        const when = new Date(a.created_at).toLocaleString();
+        tr.innerHTML = `<td>${a.type}</td><td>${a.score}</td><td>${a.grade}</td><td>${when}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+  })();
+</script>

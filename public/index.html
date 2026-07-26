@@ -1,0 +1,64 @@
+<title>DysLearn — Login</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<div class="page" style="max-width: 480px;">
+  <h1>📚 DysLearn</h1>
+  <p>An AI-based tutor for lower primary pupils with learning difficulties.</p>
+
+  <div class="card">
+    <div class="role-toggle">
+      <button type="button" id="role-student" class="active">I'm a Pupil</button>
+      <button type="button" id="role-teacher">I'm a Teacher</button>
+    </div>
+
+    <form id="login-form">
+      <label id="identifier-label" for="identifier">Username</label>
+      <input id="identifier" name="identifier" autocomplete="username" required />
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+      <button type="submit">Log In</button>
+    </form>
+
+    <div id="msg"></div>
+
+    <p style="margin-top: 20px;">New here? <a href="/register.html">Create an account</a></p>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  let role = 'student';
+  const studentBtn = document.getElementById('role-student');
+  const teacherBtn = document.getElementById('role-teacher');
+  const idLabel = document.getElementById('identifier-label');
+  const idInput = document.getElementById('identifier');
+
+  function setRole(r) {
+    role = r;
+    studentBtn.classList.toggle('active', r === 'student');
+    teacherBtn.classList.toggle('active', r === 'teacher');
+    idLabel.textContent = r === 'student' ? 'Username' : 'Email';
+    idInput.type = r === 'student' ? 'text' : 'email';
+  }
+  studentBtn.addEventListener('click', () => setRole('student'));
+  teacherBtn.addEventListener('click', () => setRole('teacher'));
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const identifier = document.getElementById('identifier').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+    try {
+      const data = await api('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ role, identifier, password })
+      });
+      window.location.href = data.role === 'student' ? '/student-dashboard.html' : '/teacher-dashboard.html';
+    } catch (err) {
+      msg.innerHTML = `<div class="error-msg">${err.message}</div>`;
+    }
+  });
+</script>

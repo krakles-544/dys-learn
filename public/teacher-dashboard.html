@@ -1,0 +1,122 @@
+<title>DysLearn — Teacher Dashboard</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<div class="topbar">
+  <span>📚 DysLearn — Teacher</span>
+  <a href="#" id="logout">Log Out</a>
+</div>
+
+<div class="page">
+  <h1 id="greeting">Welcome!</h1>
+
+  <div class="card" id="student-list-card">
+    <h2>My Pupils</h2>
+    <table id="student-table">
+      <thead><tr><th>Name</th><th>Grade</th><th>Avg. Score</th><th>Attempts</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p id="no-students" style="display:none;">No pupils registered yet.</p>
+  </div>
+
+  <div class="card" id="detail-card" style="display:none;">
+    <button type="button" id="close-detail" class="secondary">← Back to list</button>
+    <h2 id="detail-name"></h2>
+    <div id="detail-levels"></div>
+    <button type="button" id="generate-report-btn">Generate Progress Report</button>
+    <div id="report-box"></div>
+    <h3>Recent Attempts</h3>
+    <table id="attempts-table">
+      <thead><tr><th>Type</th><th>Difficulty</th><th>Score</th><th>Grade</th><th>Latency (s)</th><th>When</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  (async function init() {
+    const me = await requireAuth('teacher');
+    if (!me) return;
+    wireLogout('#logout');
+    document.getElementById('greeting').textContent = `Welcome back, ${me.name}! 👋`;
+    await loadStudentList();
+  })();
+
+  async function loadStudentList() {
+    const data = await api('/api/teacher/students');
+    const tbody = document.querySelector('#student-table tbody');
+    tbody.innerHTML = '';
+    if (data.students.length === 0) {
+      document.getElementById('no-students').style.display = 'block';
+      return;
+    }
+    for (const s of data.students) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.firstname} ${s.lastname}</td>
+        <td>${s.grade}</td>
+        <td>${s.avg_score ?? '—'}</td>
+        <td>${s.attempt_count}</td>
+        <td><button type="button" data-id="${s.student_id}" class="view-btn">View</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+    tbody.querySelectorAll('.view-btn').forEach((btn) => {
+      btn.addEventListener('click', () => openStudent(btn.dataset.id));
+    });
+  }
+
+  document.getElementById('close-detail').addEventListener('click', () => {
+    document.getElementById('detail-card').style.display = 'none';
+    document.getElementById('student-list-card').style.display = 'block';
+  });
+
+  let currentStudentId = null;
+
+  async function openStudent(id) {
+    currentStudentId = id;
+    const data = await api(`/api/teacher/students/${id}`);
+    document.getElementById('student-list-card').style.display = 'none';
+    document.getElementById('detail-card').style.display = 'block';
+    document.getElementById('detail-name').textContent = `${data.student.firstname} ${data.student.lastname} — Grade ${data.student.grade}`;
+
+    const levelsEl = document.getElementById('detail-levels');
+    levelsEl.innerHTML = data.difficulty.map((d) => `<span class="badge">${d.subject_name}: Level ${d.level}/5</span>`).join(' ');
+
+    renderReport(data.latestReport);
+
+    const attemptsBody = document.querySelector('#attempts-table tbody');
+    attemptsBody.innerHTML = '';
+    for (const a of data.attempts) {
+      const tr = document.createElement('tr');
+      const when = new Date(a.created_at).toLocaleString();
+      tr.innerHTML = `<td>${a.type}</td><td>${a.difficulty}</td><td>${a.score}</td><td>${a.grade}</td><td>${(a.latency_ms / 1000).toFixed(1)}</td><td>${when}</td>`;
+      attemptsBody.appendChild(tr);
+    }
+  }
+
+  function renderReport(report) {
+    const box = document.getElementById('report-box');
+    if (!report) {
+      box.innerHTML = '<p>No progress report generated yet.</p>';
+      return;
+    }
+    box.innerHTML = `
+      <div class="success-msg">
+        <strong>Average Score:</strong> ${report.average_score}<br/>
+        <strong>Strengths:</strong> ${report.strengths}<br/>
+        <strong>Challenges:</strong> ${report.challenges}<br/>
+        <small>Generated ${new Date(report.generated_at).toLocaleString()}</small>
+      </div>
+    `;
+  }
+
+  document.getElementById('generate-report-btn').addEventListener('click', async () => {
+    try {
+      await api(`/api/teacher/students/${currentStudentId}/generate-report`, { method: 'POST' });
+      await openStudent(currentStudentId);
+    } catch (err) {
+      document.getElementById('report-box').innerHTML = `<div class="error-msg">${err.message}</div>`;
+    }
+  });
+</script>

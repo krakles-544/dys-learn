@@ -1,0 +1,50 @@
+<title>DysLearn — Exercise</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<div class="topbar">
+  <a href="/student-dashboard.html">← Back to Dashboard</a>
+  <a href="#" id="logout">Log Out</a>
+</div>
+
+<div class="page">
+  <div id="exercise-root" class="card">Loading exercise...</div>
+</div>
+
+<script src="/js/app.js"></script>
+<script src="/js/speech.js"></script>
+<script src="/js/exercise-choice.js"></script>
+<script src="/js/exercise-scramble.js"></script>
+<script src="/js/exercise-dictation.js"></script>
+<script>
+  (async function init() {
+    const me = await requireAuth('student');
+    if (!me) return;
+    wireLogout('#logout');
+
+    const params = new URLSearchParams(window.location.search);
+    const subjectId = Number(params.get('subjectId'));
+    const type = params.get('type');
+    const root = document.getElementById('exercise-root');
+
+    if (!subjectId || !type) {
+      root.innerHTML = '<p>Missing subject or exercise type. <a href="/student-dashboard.html">Go back</a>.</p>';
+      return;
+    }
+
+    const renderers = {
+      dragdrop: renderDragdrop,
+      scramble: renderScramble,
+      dictation: renderDictation,
+      addition: renderAddition,
+      subtraction: renderSubtraction,
+      multiplication: renderMultiplication,
+      division: renderDivision
+    };
+    const renderer = renderers[type];
+    if (!renderer) {
+      root.innerHTML = '<p>Unknown exercise type.</p>';
+      return;
+    }
+    renderer(root, subjectId);
+  })();
+</script>
