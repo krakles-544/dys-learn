@@ -60,6 +60,14 @@ function seedDemoAccounts() {
   }
 }
 
-seedSubjects();
-seedDemoAccounts();
-console.log('Seed complete.');
+// Guarded: this runs on every server boot (see server.js) so demo data survives
+// hosts with ephemeral disks. A transient failure here (e.g. a lock contention
+// race if a restart overlaps the previous process) must not crash the whole
+// server before it can even start listening.
+try {
+  seedSubjects();
+  seedDemoAccounts();
+  console.log('Seed complete.');
+} catch (err) {
+  console.error('Seeding failed (continuing to start server anyway):', err);
+}
