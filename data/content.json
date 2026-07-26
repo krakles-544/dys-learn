@@ -40,6 +40,47 @@
       ]
     }
   },
+  "swahili": {
+    "dragdrop": {
+      "1": [
+        { "word": "paka", "choices": [{ "id": "a", "emoji": "🐱" }, { "id": "b", "emoji": "🐶" }, { "id": "c", "emoji": "🐦" }], "answer": "a" },
+        { "word": "mbwa", "choices": [{ "id": "a", "emoji": "🐶" }, { "id": "b", "emoji": "🐱" }, { "id": "c", "emoji": "🐟" }], "answer": "a" },
+        { "word": "jua", "choices": [{ "id": "a", "emoji": "☀️" }, { "id": "b", "emoji": "🌙" }, { "id": "c", "emoji": "⭐" }], "answer": "a" },
+        { "word": "kitabu", "choices": [{ "id": "a", "emoji": "📖" }, { "id": "b", "emoji": "✏️" }, { "id": "c", "emoji": "🎒" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "tembo", "choices": [{ "id": "a", "emoji": "🐘" }, { "id": "b", "emoji": "🦏" }, { "id": "c", "emoji": "🦓" }], "answer": "a" },
+        { "word": "baiskeli", "choices": [{ "id": "a", "emoji": "🚲" }, { "id": "b", "emoji": "🚗" }, { "id": "c", "emoji": "✈️" }], "answer": "a" },
+        { "word": "mwavuli", "choices": [{ "id": "a", "emoji": "☂️" }, { "id": "b", "emoji": "🧣" }, { "id": "c", "emoji": "🎂" }], "answer": "a" },
+        { "word": "kipepeo", "choices": [{ "id": "a", "emoji": "🦋" }, { "id": "b", "emoji": "🐝" }, { "id": "c", "emoji": "🐞" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "darubini", "choices": [{ "id": "a", "emoji": "🔭" }, { "id": "b", "emoji": "📷" }, { "id": "c", "emoji": "🔎" }], "answer": "a" },
+        { "word": "maporomoko", "choices": [{ "id": "a", "emoji": "🌊" }, { "id": "b", "emoji": "🏔️" }, { "id": "c", "emoji": "🌋" }], "answer": "a" },
+        { "word": "kipimajoto", "choices": [{ "id": "a", "emoji": "🌡️" }, { "id": "b", "emoji": "⏱️" }, { "id": "c", "emoji": "💊" }], "answer": "a" },
+        { "word": "helikopta", "choices": [{ "id": "a", "emoji": "🚁" }, { "id": "b", "emoji": "✈️" }, { "id": "c", "emoji": "🚀" }], "answer": "a" }
+      ]
+    },
+    "scramble": {
+      "1": ["paka", "mbwa", "jua", "meza", "embe", "gari"],
+      "3": ["ndizi", "simba", "zabibu", "nyumba", "maziwa", "kiatu"],
+      "5": ["dinosaria", "chokoleti", "kompyuta", "hospitali", "mwalimu", "machungwa"]
+    },
+    "dictation": {
+      "1": [
+        { "story": "Paka aliketi juu ya mkeka. Ilikuwa siku ya jua.", "keywords": ["paka", "mkeka", "siku", "jua"] },
+        { "story": "Tom ana mpira mwekundu. Anapenda kucheza bustanini.", "keywords": ["tom", "mpira", "mwekundu", "kucheza", "bustanini"] }
+      ],
+      "3": [
+        { "story": "Maria alitembea na mbwa wake sokoni. Alinunua mkate mpya na kikapu cha maembe.", "keywords": ["maria", "mbwa", "sokoni", "mkate", "kikapu", "maembe"] },
+        { "story": "Watoto walijenga ngome ya mchanga karibu na bahari. Mawimbi yaliosha mnara wao mdogo na wakacheka.", "keywords": ["watoto", "mchanga", "bahari", "mawimbi", "mnara", "wakacheka"] }
+      ],
+      "5": [
+        { "story": "Wakati wa safari ya shule, wanafunzi walitembelea hifadhi ya wanyama ambapo mlinzi alieleza jinsi tembo wanavyowasiliana kwa sauti za chini.", "keywords": ["safari", "shule", "wanafunzi", "hifadhi", "wanyama", "mlinzi", "tembo"] },
+        { "story": "Mlinzi wa taa ya baharini alipanda ngazi za mviringo kila jioni kuwasha taa ili meli ziweze kusafiri salama wakati wa dhoruba.", "keywords": ["mlinzi", "taa", "baharini", "ngazi", "meli", "dhoruba"] }
+      ]
+    }
+  },
   "math": {
     "dragdrop": {
       "1": [

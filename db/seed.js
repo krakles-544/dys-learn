@@ -30,9 +30,11 @@ function seedSubjects() {
   const insertSubject = db.prepare('INSERT INTO subjects (subject_name, subject_desc) VALUES (?, ?)');
   const englishId = insertSubject.run('English/Literacy', 'Reading, spelling and comprehension exercises').lastInsertRowid;
   const mathId = insertSubject.run('Math', 'Counting, number recognition, and addition, subtraction, multiplication & division').lastInsertRowid;
+  const swahiliId = insertSubject.run('Kiswahili', 'Vocabulary, spelling and story comprehension in Kiswahili').lastInsertRowid;
 
   seedExercisesForSubject(englishId, content.english);
   seedExercisesForSubject(mathId, content.math);
+  seedExercisesForSubject(swahiliId, content.swahili);
 
   console.log('Seeded subjects and exercise content bank.');
 }
