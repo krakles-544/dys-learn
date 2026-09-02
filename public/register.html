@@ -1,13 +1,19 @@
 <title>DysLearn — Register</title>
 <link rel="stylesheet" href="/css/style.css" />
 
-<div class="page" style="max-width: 520px;">
+<div class="topbar">
+  <span class="brand"><span class="brand-icon">🎓</span> Dyslearn</span>
+</div>
+
+<div class="page narrow">
   <h1>📚 Create your DysLearn account</h1>
+  <p class="page-intro">Choose your role and fill in a few details to get started.</p>
 
   <div class="card">
     <div class="role-toggle">
       <button type="button" id="role-student" class="active">I'm a Pupil</button>
       <button type="button" id="role-teacher">I'm a Teacher</button>
+      <button type="button" id="role-parent">I'm a Parent</button>
     </div>
 
     <form id="student-form">
@@ -25,7 +31,7 @@
       <input id="s-password" type="password" required />
       <label for="s-parent">Parent/Guardian Phone</label>
       <input id="s-parent" />
-      <button type="submit">Create Pupil Account</button>
+      <button type="submit" class="btn-block">Create Pupil Account</button>
     </form>
 
     <form id="teacher-form" style="display:none;">
@@ -39,7 +45,23 @@
       <input id="t-subject" />
       <label for="t-password">Choose a Password</label>
       <input id="t-password" type="password" required />
-      <button type="submit">Create Teacher Account</button>
+      <button type="submit" class="btn-block">Create Teacher Account</button>
+    </form>
+
+    <form id="parent-form" style="display:none;">
+      <label for="p-firstname">First Name</label>
+      <input id="p-firstname" required />
+      <label for="p-lastname">Last Name</label>
+      <input id="p-lastname" required />
+      <label for="p-email">Email</label>
+      <input id="p-email" type="email" required />
+      <label for="p-mobile">Phone</label>
+      <input id="p-mobile" />
+      <label for="p-child">Child's Registration No. <span class="muted">(optional — you can link children later)</span></label>
+      <input id="p-child" placeholder="e.g. DL-2026-001" />
+      <label for="p-password">Choose a Password</label>
+      <input id="p-password" type="password" required />
+      <button type="submit" class="btn-block">Create Parent Account</button>
     </form>
 
     <div id="msg"></div>
@@ -50,24 +72,28 @@
 <script src="/js/app.js"></script>
 <script>
   let role = 'student';
-  const studentBtn = document.getElementById('role-student');
-  const teacherBtn = document.getElementById('role-teacher');
-  const studentForm = document.getElementById('student-form');
-  const teacherForm = document.getElementById('teacher-form');
+  const buttons = {
+    student: document.getElementById('role-student'),
+    teacher: document.getElementById('role-teacher'),
+    parent: document.getElementById('role-parent')
+  };
+  const forms = {
+    student: document.getElementById('student-form'),
+    teacher: document.getElementById('teacher-form'),
+    parent: document.getElementById('parent-form')
+  };
 
   function setRole(r) {
     role = r;
-    studentBtn.classList.toggle('active', r === 'student');
-    teacherBtn.classList.toggle('active', r === 'teacher');
-    studentForm.style.display = r === 'student' ? 'block' : 'none';
-    teacherForm.style.display = r === 'teacher' ? 'block' : 'none';
+    for (const [key, btn] of Object.entries(buttons)) btn.classList.toggle('active', key === r);
+    for (const [key, form] of Object.entries(forms)) form.style.display = key === r ? 'block' : 'none';
   }
-  studentBtn.addEventListener('click', () => setRole('student'));
-  teacherBtn.addEventListener('click', () => setRole('teacher'));
+  for (const [key, btn] of Object.entries(buttons)) btn.addEventListener('click', () => setRole(key));
 
   const msg = document.getElementById('msg');
+  const val = (id) => document.getElementById(id).value;
 
-  studentForm.addEventListener('submit', async (e) => {
+  forms.student.addEventListener('submit', async (e) => {
     e.preventDefault();
     msg.innerHTML = '';
     try {
@@ -75,22 +101,16 @@
         method: 'POST',
         body: JSON.stringify({
           role: 'student',
-          regno: document.getElementById('s-regno').value,
-          firstname: document.getElementById('s-firstname').value,
-          lastname: document.getElementById('s-lastname').value,
-          grade: Number(document.getElementById('s-grade').value),
-          username: document.getElementById('s-username').value,
-          password: document.getElementById('s-password').value,
-          parent_mobile: document.getElementById('s-parent').value
+          regno: val('s-regno'), firstname: val('s-firstname'), lastname: val('s-lastname'),
+          grade: Number(val('s-grade')), username: val('s-username'), password: val('s-password'),
+          parent_mobile: val('s-parent')
         })
       });
       window.location.href = '/student-dashboard.html';
-    } catch (err) {
-      msg.innerHTML = `<div class="error-msg">${err.message}</div>`;
-    }
+    } catch (err) { msg.innerHTML = `<div class="error-msg">${err.message}</div>`; }
   });
 
-  teacherForm.addEventListener('submit', async (e) => {
+  forms.teacher.addEventListener('submit', async (e) => {
     e.preventDefault();
     msg.innerHTML = '';
     try {
@@ -98,16 +118,27 @@
         method: 'POST',
         body: JSON.stringify({
           role: 'teacher',
-          firstname: document.getElementById('t-firstname').value,
-          lastname: document.getElementById('t-lastname').value,
-          email: document.getElementById('t-email').value,
-          subject: document.getElementById('t-subject').value,
-          password: document.getElementById('t-password').value
+          firstname: val('t-firstname'), lastname: val('t-lastname'), email: val('t-email'),
+          subject: val('t-subject'), password: val('t-password')
         })
       });
       window.location.href = '/teacher-dashboard.html';
-    } catch (err) {
-      msg.innerHTML = `<div class="error-msg">${err.message}</div>`;
-    }
+    } catch (err) { msg.innerHTML = `<div class="error-msg">${err.message}</div>`; }
+  });
+
+  forms.parent.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.innerHTML = '';
+    try {
+      const data = await api('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          role: 'parent',
+          firstname: val('p-firstname'), lastname: val('p-lastname'), email: val('p-email'),
+          mobile: val('p-mobile'), child_regno: val('p-child'), password: val('p-password')
+        })
+      });
+      window.location.href = '/parent-dashboard.html';
+    } catch (err) { msg.innerHTML = `<div class="error-msg">${err.message}</div>`; }
   });
 </script>

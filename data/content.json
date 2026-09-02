@@ -182,5 +182,87 @@
         { "word": "108 ÷ 9", "choices": [{ "id": "a", "emoji": "12" }, { "id": "b", "emoji": "11" }, { "id": "c", "emoji": "13" }], "answer": "a" }
       ]
     }
+  },
+  "sst": {
+    "dragdrop": {
+      "1": [
+        { "word": "school", "choices": [{ "id": "a", "emoji": "🏫" }, { "id": "b", "emoji": "🏥" }, { "id": "c", "emoji": "⛪" }], "answer": "a" },
+        { "word": "hospital", "choices": [{ "id": "a", "emoji": "🏥" }, { "id": "b", "emoji": "🏦" }, { "id": "c", "emoji": "🏪" }], "answer": "a" },
+        { "word": "market", "choices": [{ "id": "a", "emoji": "🏪" }, { "id": "b", "emoji": "🏫" }, { "id": "c", "emoji": "⛪" }], "answer": "a" },
+        { "word": "home", "choices": [{ "id": "a", "emoji": "🏠" }, { "id": "b", "emoji": "🏫" }, { "id": "c", "emoji": "🏥" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "flag", "choices": [{ "id": "a", "emoji": "🇰🇪" }, { "id": "b", "emoji": "🏳️" }, { "id": "c", "emoji": "🚩" }], "answer": "a" },
+        { "word": "farm", "choices": [{ "id": "a", "emoji": "🚜" }, { "id": "b", "emoji": "🏭" }, { "id": "c", "emoji": "🏢" }], "answer": "a" },
+        { "word": "police", "choices": [{ "id": "a", "emoji": "👮" }, { "id": "b", "emoji": "🧑‍🌾" }, { "id": "c", "emoji": "🧑‍🏫" }], "answer": "a" },
+        { "word": "river", "choices": [{ "id": "a", "emoji": "🏞️" }, { "id": "b", "emoji": "🏜️" }, { "id": "c", "emoji": "🏙️" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "mountain", "choices": [{ "id": "a", "emoji": "⛰️" }, { "id": "b", "emoji": "🏝️" }, { "id": "c", "emoji": "🏙️" }], "answer": "a" },
+        { "word": "desert", "choices": [{ "id": "a", "emoji": "🏜️" }, { "id": "b", "emoji": "🏞️" }, { "id": "c", "emoji": "🏔️" }], "answer": "a" },
+        { "word": "lake", "choices": [{ "id": "a", "emoji": "🏞️" }, { "id": "b", "emoji": "🌋" }, { "id": "c", "emoji": "🏜️" }], "answer": "a" },
+        { "word": "compass", "choices": [{ "id": "a", "emoji": "🧭" }, { "id": "b", "emoji": "🗺️" }, { "id": "c", "emoji": "⏰" }], "answer": "a" }
+      ]
+    },
+    "scramble": {
+      "1": ["home", "town", "road", "farm", "lake", "hill"],
+      "3": ["county", "market", "forest", "rivers", "border", "safari"],
+      "5": ["equator", "savanna", "plateau", "heritage", "boundary", "continent"]
+    },
+    "dictation": {
+      "1": [
+        { "story": "We live in a small town. There is a school, a market and a clinic near our home.", "keywords": ["town", "school", "market", "clinic", "home"] },
+        { "story": "My father is a farmer. He grows maize and beans on our farm.", "keywords": ["father", "farmer", "maize", "beans", "farm"] }
+      ],
+      "3": [
+        { "story": "Kenya has a red, black, green and white flag with a shield in the middle. Nairobi is the capital city.", "keywords": ["kenya", "flag", "shield", "nairobi", "capital"] },
+        { "story": "Long ago people traded goods without money. They gave salt or cattle in exchange for grain at the market.", "keywords": ["traded", "money", "salt", "cattle", "grain", "market"] }
+      ],
+      "5": [
+        { "story": "The Great Rift Valley runs through Kenya from north to south. It has deep lakes, steep escarpments and old volcanoes.", "keywords": ["rift", "valley", "kenya", "lakes", "escarpments", "volcanoes"] },
+        { "story": "A community leader settles disputes, organises clean up days and represents the village when the county government makes decisions.", "keywords": ["community", "leader", "disputes", "village", "county", "government"] }
+      ]
+    }
+  },
+  "science": {
+    "dragdrop": {
+      "1": [
+        { "word": "sun", "choices": [{ "id": "a", "emoji": "☀️" }, { "id": "b", "emoji": "🌧️" }, { "id": "c", "emoji": "❄️" }], "answer": "a" },
+        { "word": "rain", "choices": [{ "id": "a", "emoji": "🌧️" }, { "id": "b", "emoji": "☀️" }, { "id": "c", "emoji": "🌈" }], "answer": "a" },
+        { "word": "plant", "choices": [{ "id": "a", "emoji": "🌱" }, { "id": "b", "emoji": "🪨" }, { "id": "c", "emoji": "🔥" }], "answer": "a" },
+        { "word": "fish", "choices": [{ "id": "a", "emoji": "🐟" }, { "id": "b", "emoji": "🐦" }, { "id": "c", "emoji": "🐛" }], "answer": "a" }
+      ],
+      "3": [
+        { "word": "magnet", "choices": [{ "id": "a", "emoji": "🧲" }, { "id": "b", "emoji": "🔋" }, { "id": "c", "emoji": "💡" }], "answer": "a" },
+        { "word": "battery", "choices": [{ "id": "a", "emoji": "🔋" }, { "id": "b", "emoji": "🧲" }, { "id": "c", "emoji": "🕯️" }], "answer": "a" },
+        { "word": "seed", "choices": [{ "id": "a", "emoji": "🌰" }, { "id": "b", "emoji": "🍂" }, { "id": "c", "emoji": "🪵" }], "answer": "a" },
+        { "word": "insect", "choices": [{ "id": "a", "emoji": "🐜" }, { "id": "b", "emoji": "🐘" }, { "id": "c", "emoji": "🐬" }], "answer": "a" }
+      ],
+      "5": [
+        { "word": "microscope", "choices": [{ "id": "a", "emoji": "🔬" }, { "id": "b", "emoji": "🔭" }, { "id": "c", "emoji": "📷" }], "answer": "a" },
+        { "word": "volcano", "choices": [{ "id": "a", "emoji": "🌋" }, { "id": "b", "emoji": "🏔️" }, { "id": "c", "emoji": "🏝️" }], "answer": "a" },
+        { "word": "thermometer", "choices": [{ "id": "a", "emoji": "🌡️" }, { "id": "b", "emoji": "⚖️" }, { "id": "c", "emoji": "⏱️" }], "answer": "a" },
+        { "word": "planet", "choices": [{ "id": "a", "emoji": "🪐" }, { "id": "b", "emoji": "⭐" }, { "id": "c", "emoji": "☄️" }], "answer": "a" }
+      ]
+    },
+    "scramble": {
+      "1": ["sun", "air", "leaf", "bone", "moon", "seed"],
+      "3": ["energy", "plants", "magnet", "oxygen", "liquid", "weather"],
+      "5": ["gravity", "friction", "nutrient", "predator", "mixture", "skeleton"]
+    },
+    "dictation": {
+      "1": [
+        { "story": "Plants need sunlight, water and air to grow. We water the garden every morning.", "keywords": ["plants", "sunlight", "water", "air", "grow", "garden"] },
+        { "story": "A frog begins life as an egg. The egg hatches into a tadpole that swims in the pond.", "keywords": ["frog", "egg", "hatches", "tadpole", "swims", "pond"] }
+      ],
+      "3": [
+        { "story": "Water can be a solid, a liquid or a gas. When ice is warmed it melts, and when water is boiled it turns into steam.", "keywords": ["water", "solid", "liquid", "gas", "ice", "melts", "steam"] },
+        { "story": "A magnet pulls objects made of iron. It has a north pole and a south pole, and like poles push away from each other.", "keywords": ["magnet", "iron", "north", "south", "pole", "push"] }
+      ],
+      "5": [
+        { "story": "The digestive system breaks food into tiny pieces so the body can absorb nutrients. It starts in the mouth and ends in the intestines.", "keywords": ["digestive", "system", "food", "nutrients", "mouth", "intestines"] },
+        { "story": "During photosynthesis green leaves use sunlight to turn carbon dioxide and water into sugar, releasing oxygen that animals breathe.", "keywords": ["photosynthesis", "leaves", "sunlight", "carbon", "water", "sugar", "oxygen"] }
+      ]
+    }
   }
 }

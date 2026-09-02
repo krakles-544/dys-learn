@@ -1,14 +1,19 @@
 <title>DysLearn — Login</title>
 <link rel="stylesheet" href="/css/style.css" />
 
-<div class="page" style="max-width: 480px;">
-  <h1>📚 DysLearn</h1>
-  <p>An AI-based tutor for lower primary pupils with learning difficulties.</p>
+<div class="topbar">
+  <span class="brand"><span class="brand-icon">🎓</span> Dyslearn</span>
+</div>
+
+<div class="page narrow">
+  <h1>📚 Welcome to DysLearn</h1>
+  <p class="page-intro">An AI-based tutor for lower primary pupils with learning difficulties.</p>
 
   <div class="card">
     <div class="role-toggle">
       <button type="button" id="role-student" class="active">I'm a Pupil</button>
       <button type="button" id="role-teacher">I'm a Teacher</button>
+      <button type="button" id="role-parent">I'm a Parent</button>
     </div>
 
     <form id="login-form">
@@ -18,7 +23,7 @@
       <label for="password">Password</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required />
 
-      <button type="submit">Log In</button>
+      <button type="submit" class="btn-block">Log In</button>
     </form>
 
     <div id="msg"></div>
@@ -30,20 +35,27 @@
 <script src="/js/app.js"></script>
 <script>
   let role = 'student';
-  const studentBtn = document.getElementById('role-student');
-  const teacherBtn = document.getElementById('role-teacher');
+  const buttons = {
+    student: document.getElementById('role-student'),
+    teacher: document.getElementById('role-teacher'),
+    parent: document.getElementById('role-parent')
+  };
   const idLabel = document.getElementById('identifier-label');
   const idInput = document.getElementById('identifier');
 
   function setRole(r) {
     role = r;
-    studentBtn.classList.toggle('active', r === 'student');
-    teacherBtn.classList.toggle('active', r === 'teacher');
+    for (const [key, btn] of Object.entries(buttons)) btn.classList.toggle('active', key === r);
     idLabel.textContent = r === 'student' ? 'Username' : 'Email';
     idInput.type = r === 'student' ? 'text' : 'email';
   }
-  studentBtn.addEventListener('click', () => setRole('student'));
-  teacherBtn.addEventListener('click', () => setRole('teacher'));
+  for (const [key, btn] of Object.entries(buttons)) btn.addEventListener('click', () => setRole(key));
+
+  const dest = {
+    student: '/student-dashboard.html',
+    teacher: '/teacher-dashboard.html',
+    parent: '/parent-dashboard.html'
+  };
 
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -56,7 +68,7 @@
         method: 'POST',
         body: JSON.stringify({ role, identifier, password })
       });
-      window.location.href = data.role === 'student' ? '/student-dashboard.html' : '/teacher-dashboard.html';
+      window.location.href = dest[data.role] || '/';
     } catch (err) {
       msg.innerHTML = `<div class="error-msg">${err.message}</div>`;
     }

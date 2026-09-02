@@ -47,7 +47,36 @@ router.post('/register', (req, res) => {
     return res.json({ ok: true, role: 'teacher' });
   }
 
-  return res.status(400).json({ error: 'role must be "student" or "teacher".' });
+  if (role === 'parent') {
+    const { firstname, lastname, email, mobile, password, child_regno } = req.body;
+    if (!firstname || !lastname || !email || !password) {
+      return res.status(400).json({ error: 'Missing required parent fields.' });
+    }
+    const existing = db.prepare('SELECT 1 FROM parents WHERE email = ?').get(email);
+    if (existing) return res.status(409).json({ error: 'Email already registered.' });
+
+    const hash = bcrypt.hashSync(password, 10);
+    const parentId = db
+      .prepare('INSERT INTO parents (firstname, lastname, email, mobile, userpassword) VALUES (?, ?, ?, ?, ?)')
+      .run(firstname, lastname, email, mobile || null, hash).lastInsertRowid;
+
+    // Optional: link a child straight away by registration number. A wrong or
+    // missing number just leaves the account with no children linked yet — the
+    // dashboard shows a "No Registered Children Linked" empty state.
+    let linked = false;
+    if (child_regno) {
+      const child = db.prepare('SELECT student_id FROM students WHERE regno = ?').get(String(child_regno).trim());
+      if (child) {
+        db.prepare('INSERT OR IGNORE INTO parent_children (parent_id, student_id) VALUES (?, ?)').run(parentId, child.student_id);
+        linked = true;
+      }
+    }
+
+    req.session.user = { id: parentId, role: 'parent', name: firstname };
+    return res.json({ ok: true, role: 'parent', linked });
+  }
+
+  return res.status(400).json({ error: 'role must be "student", "teacher" or "parent".' });
 });
 
 router.post('/login', (req, res) => {
@@ -71,7 +100,16 @@ router.post('/login', (req, res) => {
     return res.json({ ok: true, role: 'teacher' });
   }
 
-  return res.status(400).json({ error: 'role must be "student" or "teacher".' });
+  if (role === 'parent') {
+    const parent = db.prepare('SELECT * FROM parents WHERE email = ?').get(identifier);
+    if (!parent || !bcrypt.compareSync(password, parent.userpassword)) {
+      return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+    req.session.user = { id: parent.parent_id, role: 'parent', name: parent.firstname };
+    return res.json({ ok: true, role: 'parent' });
+  }
+
+  return res.status(400).json({ error: 'role must be "student", "teacher" or "parent".' });
 });
 
 router.post('/logout', (req, res) => {

@@ -1,0 +1,63 @@
+<title>DysLearn — Books</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<div id="topbar"></div>
+
+<div class="page">
+  <p><a href="/student-dashboard.html">← Back to Dashboard</a></p>
+  <div class="section-head">
+    <h1 id="page-title">Books</h1>
+    <button type="button" id="listen" class="listen-inline ghost"><span class="speak-chip">🔊</span> Read this page</button>
+  </div>
+
+  <div id="book-grid" class="grid"></div>
+  <div id="empty" class="card empty-state" style="display:none;">
+    <div class="empty-icon">📚</div>
+    <h3>No books uploaded yet</h3>
+    <p>Your teacher hasn't added any books for your class in this subject yet. Check back soon!</p>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  (async function init() {
+    const me = await requireAuth('student');
+    if (!me) return;
+    renderTopbar({ portal: 'Student', name: me.name });
+
+    const subjectId = Number(new URLSearchParams(location.search).get('subjectId'));
+    const dash = await api('/api/student/dashboard');
+    const grade = dash.student.grade;
+    const subject = dash.subjects.find((s) => s.subject_id === subjectId);
+    const subjectName = subject ? subject.subject_name : 'All subjects';
+
+    document.getElementById('page-title').textContent = `${subjectName} Books (Grade ${grade})`;
+    document.getElementById('listen').addEventListener('click', () =>
+      say(`${subjectName} books for grade ${grade}. Tap a book to listen or download it.`));
+
+    const q = subjectId ? `?subjectId=${subjectId}&grade=${grade}` : `?grade=${grade}`;
+    const { books } = await api(`/api/books${q}`);
+
+    const gridEl = document.getElementById('book-grid');
+    if (books.length === 0) {
+      document.getElementById('empty').style.display = 'block';
+      return;
+    }
+
+    for (const b of books) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h2>${escapeHtml(b.title)}</h2>
+        <p><span class="badge neutral">${b.book_type_display}</span> <span class="muted">${escapeHtml(b.subject_name)} · Grade ${b.grade}</span></p>
+        ${b.pdf_url
+          ? `<a class="btn btn-block" href="${b.pdf_url}" target="_blank" rel="noopener">⬇️ Download PDF</a>`
+          : `<p class="muted">No digital file uploaded for this book yet.</p>`}
+        <button type="button" class="ghost" data-say="${escapeHtml(b.title)}. This is a ${b.book_type_display}.">🔊 Hear the title</button>
+      `;
+      gridEl.appendChild(card);
+    }
+    gridEl.querySelectorAll('button[data-say]').forEach((btn) =>
+      btn.addEventListener('click', () => say(btn.dataset.say)));
+  })();
+</script>
