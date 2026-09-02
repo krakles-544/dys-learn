@@ -8,6 +8,8 @@ const authRoutes = require('./routes/auth');
 const studentRoutes = require('./routes/student');
 const exerciseRoutes = require('./routes/exercises');
 const teacherRoutes = require('./routes/teacher');
+const parentRoutes = require('./routes/parent');
+const bookRoutes = require('./routes/books');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +30,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/parent', parentRoutes);
+app.use('/api/books', bookRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

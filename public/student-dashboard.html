@@ -1,89 +1,118 @@
 <title>DysLearn — My Learning</title>
 <link rel="stylesheet" href="/css/style.css" />
 
-<div class="topbar">
-  <span>📚 DysLearn</span>
-  <a href="#" id="logout">Log Out</a>
-</div>
+<div id="topbar"></div>
 
 <div class="page">
-  <h1 id="greeting">Welcome!</h1>
+  <div class="section-head">
+    <div>
+      <h1 id="greeting">Welcome back, let's learn! ✏️</h1>
+      <p class="page-intro" style="margin:0;">Click on any subject below to open books, storybooks, or play learning games.</p>
+    </div>
+    <button type="button" id="listen-instructions" class="listen-inline ghost">
+      <span class="speak-chip">🔊</span> Listen to instructions
+    </button>
+  </div>
 
+  <div class="stat-row" id="stat-row"></div>
+
+  <h2>My Subjects</h2>
   <div id="subjects" class="grid"></div>
 
   <div class="card">
     <h2>My Recent Activity</h2>
-    <table id="recent-table">
-      <thead><tr><th>Type</th><th>Score</th><th>Grade</th><th>When</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="recent-table">
+        <thead><tr><th>Type</th><th>Score</th><th>Grade</th><th>When</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <p id="no-activity" style="display:none;">No exercises attempted yet — pick a subject above to get started!</p>
   </div>
 </div>
 
 <script src="/js/app.js"></script>
 <script>
+  const INSTRUCTIONS = "Welcome back! Click on any subject to play a learning game or open a book. Your stars show how well you are doing. Take your time and have fun.";
+
   (async function init() {
     const me = await requireAuth('student');
     if (!me) return;
-    wireLogout('#logout');
+    renderTopbar({ portal: 'Student', name: me.name });
+
+    document.getElementById('listen-instructions').addEventListener('click', () => say(INSTRUCTIONS));
 
     const data = await api('/api/student/dashboard');
-    document.getElementById('greeting').textContent = `Welcome back, ${data.student.firstname}! 👋`;
+    document.getElementById('greeting').textContent = `Welcome back, ${data.student.firstname}! Let's learn ✏️`;
+
+    // Stat tiles
+    document.getElementById('stat-row').innerHTML = `
+      <div class="stat blue"><div class="stat-value">${data.student.attendance_days ?? 0}</div><div class="stat-label">Days Attended</div></div>
+      <div class="stat violet"><div class="stat-value">Grade ${data.student.grade}</div><div class="stat-label">Current Class</div></div>
+      <div class="stat green"><div class="stat-value">${data.status.label}</div><div class="stat-label">Overall Progress</div></div>
+    `;
 
     const subjectsEl = document.getElementById('subjects');
-
-    const TYPE_LABELS = {
-      dragdrop: '🖼️ Picture Match',
-      scramble: '🔤 Word Scramble',
-      dictation: '🎧 Listen & Retell',
-      addition: '➕ Addition',
-      subtraction: '➖ Subtraction',
-      multiplication: '✖️ Multiplication',
-      division: '➗ Division'
-    };
-    // Which exercise types each subject offers, in display order. Curated rather
-    // than purely derived from `availableTypes` so retired types (e.g. Math's old
-    // Word Scramble/Listen & Retell content, kept in the DB only so past attempt
-    // history still resolves) don't resurface in the UI.
-    const SUBJECT_TYPES = {
-      'English/Literacy': ['dragdrop', 'scramble', 'dictation'],
-      'Math': ['dragdrop', 'addition', 'subtraction', 'multiplication', 'division'],
-      'Kiswahili': ['dragdrop', 'scramble', 'dictation']
-    };
-
     for (const subject of data.subjects) {
+      const meta = subjectMeta(subject.subject_name);
       const card = document.createElement('div');
-      card.className = 'card subject-card';
+      card.className = `card subject-card ${meta.cls}`;
+
       if (!subject.hasContent) {
-        card.innerHTML = `<h2>${subject.subject_name}</h2><p>${subject.subject_desc}</p><span class="badge" style="background:#6b6b6b;">Coming soon</span>`;
+        card.innerHTML = `
+          <div class="subject-top"><span class="subject-icon">${meta.icon}</span></div>
+          <h2>${subject.subject_name}</h2>
+          <p class="subject-desc">${subject.subject_desc}</p>
+          <span class="badge neutral">Coming soon</span>`;
         subjectsEl.appendChild(card);
         continue;
       }
+
       const types = (SUBJECT_TYPES[subject.subject_name] || subject.availableTypes)
         .filter((t) => subject.availableTypes.includes(t));
+      const primary = types[0];
+      const extras = types.slice(1);
+
       card.innerHTML = `
+        <div class="subject-top">
+          <span class="subject-icon">${meta.icon}</span>
+          <button type="button" class="speak-chip say-subject" data-say="${subject.subject_name}. ${subject.subject_desc}">🔊</button>
+        </div>
         <h2>${subject.subject_name}</h2>
-        <span class="badge">Level ${subject.level} / 5</span>
-        ${types.map(t => `<button type="button" data-subject="${subject.subject_id}" data-type="${t}" class="pick-exercise">${TYPE_LABELS[t]}</button>`).join('')}
+        <div class="subject-meta">
+          <span class="badge level">Level ${subject.level} / 5</span>
+          ${subject.bookCount ? `<span class="badge neutral">${subject.bookCount} book${subject.bookCount === 1 ? '' : 's'}</span>` : ''}
+        </div>
+        <p class="subject-desc">${subject.subject_desc}</p>
+        <button type="button" class="cta go" data-subject="${subject.subject_id}" data-type="${primary}">${meta.cta}</button>
+        <div class="subject-links">
+          ${extras.map((t) => `<button type="button" class="ghost go" data-subject="${subject.subject_id}" data-type="${t}">${TYPE_LABELS[t]}</button>`).join('')}
+          <button type="button" class="ghost books" data-subject="${subject.subject_id}">📚 Books</button>
+        </div>
       `;
       subjectsEl.appendChild(card);
     }
 
-    subjectsEl.querySelectorAll('.pick-exercise').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        window.location.href = `/exercise.html?subjectId=${btn.dataset.subject}&type=${btn.dataset.type}`;
-      });
-    });
+    subjectsEl.querySelectorAll('.go').forEach((btn) => btn.addEventListener('click', () => {
+      window.location.href = `/exercise.html?subjectId=${btn.dataset.subject}&type=${btn.dataset.type}`;
+    }));
+    subjectsEl.querySelectorAll('.books').forEach((btn) => btn.addEventListener('click', () => {
+      window.location.href = `/books.html?subjectId=${btn.dataset.subject}`;
+    }));
+    subjectsEl.querySelectorAll('.say-subject').forEach((btn) => btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      say(btn.dataset.say);
+    }));
 
     const tbody = document.querySelector('#recent-table tbody');
     if (data.recentAttempts.length === 0) {
       document.getElementById('no-activity').style.display = 'block';
+      document.getElementById('recent-table').style.display = 'none';
     } else {
       for (const a of data.recentAttempts) {
         const tr = document.createElement('tr');
         const when = new Date(a.created_at).toLocaleString();
-        tr.innerHTML = `<td>${a.type}</td><td>${a.score}</td><td>${a.grade}</td><td>${when}</td>`;
+        tr.innerHTML = `<td>${TYPE_LABELS[a.type] || a.type}</td><td>${a.score}</td><td>${a.grade}</td><td>${when}</td>`;
         tbody.appendChild(tr);
       }
     }

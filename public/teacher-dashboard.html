@@ -1,122 +1,321 @@
-<title>DysLearn — Teacher Dashboard</title>
+<title>DysLearn — Teacher Portal</title>
 <link rel="stylesheet" href="/css/style.css" />
 
-<div class="topbar">
-  <span>📚 DysLearn — Teacher</span>
-  <a href="#" id="logout">Log Out</a>
-</div>
+<div id="topbar"></div>
 
 <div class="page">
-  <h1 id="greeting">Welcome!</h1>
+  <div class="section-head">
+    <div>
+      <h1>My Class Overview</h1>
+      <p class="page-intro" style="margin:0;">Manage pupils, review game metrics, and send guidelines to parents.</p>
+    </div>
+    <button type="button" id="toggle-register">➕ Register Student</button>
+  </div>
+
+  <div class="card" id="register-card" style="display:none;">
+    <h2>Register a New Pupil</h2>
+    <form id="register-form">
+      <div class="two-col">
+        <div>
+          <label for="r-regno">Registration No.</label>
+          <input id="r-regno" required />
+          <label for="r-firstname">First Name</label>
+          <input id="r-firstname" required />
+          <label for="r-lastname">Last Name</label>
+          <input id="r-lastname" required />
+          <label for="r-grade">Grade (1–3)</label>
+          <input id="r-grade" type="number" min="1" max="3" required />
+        </div>
+        <div>
+          <label for="r-username">Username</label>
+          <input id="r-username" required />
+          <label for="r-password">Temporary Password</label>
+          <input id="r-password" required />
+          <label for="r-parent">Parent/Guardian Phone</label>
+          <input id="r-parent" />
+        </div>
+      </div>
+      <button type="submit">Create Pupil Account</button>
+      <div id="register-msg"></div>
+    </form>
+  </div>
 
   <div class="card" id="student-list-card">
-    <h2>My Pupils</h2>
-    <table id="student-table">
-      <thead><tr><th>Name</th><th>Grade</th><th>Avg. Score</th><th>Attempts</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <p id="no-students" style="display:none;">No pupils registered yet.</p>
+    <h2>Enrolled Students</h2>
+    <div class="table-scroll">
+      <table id="student-table">
+        <thead><tr><th>Student Name</th><th>Grade</th><th>Attendance</th><th>Progress Status</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p id="no-students" style="display:none;">No pupils enrolled in your class yet — use “Register Student” to add one.</p>
   </div>
 
   <div class="card" id="detail-card" style="display:none;">
     <button type="button" id="close-detail" class="secondary">← Back to list</button>
     <h2 id="detail-name"></h2>
+    <p><span id="detail-status"></span> <span class="muted" id="detail-regno"></span></p>
+
+    <h3>Adaptive Levels</h3>
     <div id="detail-levels"></div>
+
+    <h3>Attendance</h3>
+    <form id="attendance-form" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+      <div style="flex:0 0 160px;">
+        <label for="attendance-days">Days attended</label>
+        <input id="attendance-days" type="number" min="0" />
+      </div>
+      <button type="submit">Update</button>
+    </form>
+
+    <h3>Progress Report</h3>
     <button type="button" id="generate-report-btn">Generate Progress Report</button>
     <div id="report-box"></div>
+
+    <h3>Guidelines to Parent</h3>
+    <p class="muted">Saving generates a fresh AI insight and shows it, with your note, on the parent portal.</p>
+    <form id="guideline-form">
+      <label for="teacher-note">Your note to the parent</label>
+      <textarea id="teacher-note" rows="3" placeholder="e.g. Please practise flashcards for 10 minutes each evening…"></textarea>
+      <button type="submit">Save &amp; Notify Parent</button>
+    </form>
+    <div id="guideline-box"></div>
+
     <h3>Recent Attempts</h3>
-    <table id="attempts-table">
-      <thead><tr><th>Type</th><th>Difficulty</th><th>Score</th><th>Grade</th><th>Latency (s)</th><th>When</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="attempts-table">
+        <thead><tr><th>Subject</th><th>Type</th><th>Difficulty</th><th>Score</th><th>Grade</th><th>Latency (s)</th><th>When</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" id="books-card">
+    <h2>Book Library</h2>
+    <p class="page-intro" style="margin-top:0;">Textbooks, storybooks and workbooks pupils see on their Books page. Attach a PDF or leave it as a catalogue entry.</p>
+    <form id="book-form">
+      <div class="two-col">
+        <div>
+          <label for="b-subject">Subject</label>
+          <select id="b-subject" required></select>
+          <label for="b-grade">Grade</label>
+          <input id="b-grade" type="number" min="1" max="3" value="2" required />
+        </div>
+        <div>
+          <label for="b-title">Title</label>
+          <input id="b-title" required />
+          <label for="b-type">Type</label>
+          <select id="b-type">
+            <option value="textbook">Textbook</option>
+            <option value="storybook">Storybook</option>
+            <option value="workbook">Workbook</option>
+          </select>
+          <label for="b-pdf">PDF file (optional)</label>
+          <input id="b-pdf" type="file" accept="application/pdf" />
+        </div>
+      </div>
+      <button type="submit">Add Book</button>
+      <div id="book-msg"></div>
+    </form>
+    <div class="table-scroll">
+      <table id="books-table">
+        <thead><tr><th>Title</th><th>Subject</th><th>Grade</th><th>Type</th><th>File</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <script src="/js/app.js"></script>
 <script>
+  let currentStudentId = null;
+
   (async function init() {
     const me = await requireAuth('teacher');
     if (!me) return;
-    wireLogout('#logout');
-    document.getElementById('greeting').textContent = `Welcome back, ${me.name}! 👋`;
+    renderTopbar({ portal: 'Teacher Portal', name: me.name, greetingWord: 'Welcome' });
     await loadStudentList();
+    await loadSubjectsSelect();
+    await loadBooks();
   })();
+
+  document.getElementById('toggle-register').addEventListener('click', () => {
+    const c = document.getElementById('register-card');
+    c.style.display = c.style.display === 'none' ? 'block' : 'none';
+  });
+
+  const val = (id) => document.getElementById(id).value;
+
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('register-msg');
+    msg.innerHTML = '';
+    try {
+      await api('/api/teacher/students', {
+        method: 'POST',
+        body: JSON.stringify({
+          regno: val('r-regno'), firstname: val('r-firstname'), lastname: val('r-lastname'),
+          grade: Number(val('r-grade')), username: val('r-username'), password: val('r-password'),
+          parent_mobile: val('r-parent')
+        })
+      });
+      msg.innerHTML = `<div class="success-msg">Pupil registered.</div>`;
+      e.target.reset();
+      await loadStudentList();
+    } catch (err) { msg.innerHTML = `<div class="error-msg">${err.message}</div>`; }
+  });
 
   async function loadStudentList() {
     const data = await api('/api/teacher/students');
     const tbody = document.querySelector('#student-table tbody');
     tbody.innerHTML = '';
-    if (data.students.length === 0) {
-      document.getElementById('no-students').style.display = 'block';
-      return;
-    }
+    document.getElementById('no-students').style.display = data.students.length === 0 ? 'block' : 'none';
+    document.getElementById('student-table').style.display = data.students.length === 0 ? 'none' : 'table';
     for (const s of data.students) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${s.firstname} ${s.lastname}</td>
-        <td>${s.grade}</td>
-        <td>${s.avg_score ?? '—'}</td>
-        <td>${s.attempt_count}</td>
-        <td><button type="button" data-id="${s.student_id}" class="view-btn">View</button></td>
+        <td>Grade ${s.grade}</td>
+        <td>${s.attendance_days} days</td>
+        <td>${badge(s.status)}</td>
+        <td><button type="button" data-id="${s.student_id}" class="ghost view-btn">View</button></td>
       `;
       tbody.appendChild(tr);
     }
-    tbody.querySelectorAll('.view-btn').forEach((btn) => {
-      btn.addEventListener('click', () => openStudent(btn.dataset.id));
-    });
+    tbody.querySelectorAll('.view-btn').forEach((btn) => btn.addEventListener('click', () => openStudent(btn.dataset.id)));
   }
 
   document.getElementById('close-detail').addEventListener('click', () => {
     document.getElementById('detail-card').style.display = 'none';
     document.getElementById('student-list-card').style.display = 'block';
+    document.getElementById('books-card').style.display = 'block';
   });
-
-  let currentStudentId = null;
 
   async function openStudent(id) {
     currentStudentId = id;
     const data = await api(`/api/teacher/students/${id}`);
     document.getElementById('student-list-card').style.display = 'none';
+    document.getElementById('books-card').style.display = 'none';
     document.getElementById('detail-card').style.display = 'block';
-    document.getElementById('detail-name').textContent = `${data.student.firstname} ${data.student.lastname} — Grade ${data.student.grade}`;
+    window.scrollTo(0, 0);
 
-    const levelsEl = document.getElementById('detail-levels');
-    levelsEl.innerHTML = data.difficulty.map((d) => `<span class="badge">${d.subject_name}: Level ${d.level}/5</span>`).join(' ');
+    document.getElementById('detail-name').textContent = `${data.student.firstname} ${data.student.lastname} — Grade ${data.student.grade}`;
+    document.getElementById('detail-status').innerHTML = badge(data.status);
+    document.getElementById('detail-regno').textContent = `Reg. ${data.student.regno}` +
+      (data.parents.length ? ` · Parent: ${data.parents.map((p) => p.firstname + ' ' + p.lastname).join(', ')}` : ' · No parent linked');
+
+    document.getElementById('detail-levels').innerHTML = data.difficulty
+      .map((d) => `<span class="badge level">${d.subject_name}: Level ${d.level}/5</span>`).join(' ');
+
+    document.getElementById('attendance-days').value = data.student.attendance_days;
 
     renderReport(data.latestReport);
+    renderGuideline(data.latestGuideline);
+    document.getElementById('teacher-note').value = data.latestGuideline?.teacher_note || '';
 
-    const attemptsBody = document.querySelector('#attempts-table tbody');
-    attemptsBody.innerHTML = '';
+    const body = document.querySelector('#attempts-table tbody');
+    body.innerHTML = '';
     for (const a of data.attempts) {
       const tr = document.createElement('tr');
       const when = new Date(a.created_at).toLocaleString();
-      tr.innerHTML = `<td>${a.type}</td><td>${a.difficulty}</td><td>${a.score}</td><td>${a.grade}</td><td>${(a.latency_ms / 1000).toFixed(1)}</td><td>${when}</td>`;
-      attemptsBody.appendChild(tr);
+      tr.innerHTML = `<td>${a.subject_name}</td><td>${a.type}</td><td>${a.difficulty}</td><td>${a.score}</td><td>${a.grade}</td><td>${(a.latency_ms / 1000).toFixed(1)}</td><td>${when}</td>`;
+      body.appendChild(tr);
     }
   }
 
+  document.getElementById('attendance-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api(`/api/teacher/students/${currentStudentId}/attendance`, {
+      method: 'POST',
+      body: JSON.stringify({ days: Number(val('attendance-days')) })
+    });
+    await loadStudentList();
+  });
+
   function renderReport(report) {
     const box = document.getElementById('report-box');
-    if (!report) {
-      box.innerHTML = '<p>No progress report generated yet.</p>';
-      return;
-    }
+    if (!report) { box.innerHTML = '<p class="muted">No progress report generated yet.</p>'; return; }
     box.innerHTML = `
       <div class="success-msg">
         <strong>Average Score:</strong> ${report.average_score}<br/>
         <strong>Strengths:</strong> ${report.strengths}<br/>
         <strong>Challenges:</strong> ${report.challenges}<br/>
         <small>Generated ${new Date(report.generated_at).toLocaleString()}</small>
-      </div>
-    `;
+      </div>`;
+  }
+
+  function renderGuideline(g) {
+    const box = document.getElementById('guideline-box');
+    if (!g) { box.innerHTML = '<p class="muted">No guidelines sent to the parent yet.</p>'; return; }
+    box.innerHTML = `
+      <div class="insight ai"><h4>🤖 Autogenerated AI Insight</h4><p>${escapeHtml(g.ai_insight || '')}</p></div>
+      ${g.teacher_note ? `<div class="insight teacher"><h4>💬 Teacher's Guidelines</h4><p>${escapeHtml(g.teacher_note)}</p></div>` : ''}
+      <p class="muted"><small>Last sent ${new Date(g.created_at).toLocaleString()}</small></p>`;
   }
 
   document.getElementById('generate-report-btn').addEventListener('click', async () => {
     try {
       await api(`/api/teacher/students/${currentStudentId}/generate-report`, { method: 'POST' });
       await openStudent(currentStudentId);
-    } catch (err) {
-      document.getElementById('report-box').innerHTML = `<div class="error-msg">${err.message}</div>`;
+    } catch (err) { document.getElementById('report-box').innerHTML = `<div class="error-msg">${err.message}</div>`; }
+  });
+
+  document.getElementById('guideline-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api(`/api/teacher/students/${currentStudentId}/guidelines`, {
+        method: 'POST',
+        body: JSON.stringify({ teacher_note: val('teacher-note') })
+      });
+      await openStudent(currentStudentId);
+    } catch (err) { document.getElementById('guideline-box').innerHTML = `<div class="error-msg">${err.message}</div>`; }
+  });
+
+  // ---- Book library ----
+  async function loadSubjectsSelect() {
+    const { subjects } = await api('/api/books/subjects');
+    document.getElementById('b-subject').innerHTML =
+      subjects.map((s) => `<option value="${s.subject_id}">${s.subject_name}</option>`).join('');
+  }
+
+  async function loadBooks() {
+    const { books } = await api('/api/books');
+    const tbody = document.querySelector('#books-table tbody');
+    tbody.innerHTML = '';
+    for (const b of books) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(b.title)}</td>
+        <td>${escapeHtml(b.subject_name)}</td>
+        <td>${b.grade}</td>
+        <td>${b.book_type_display}</td>
+        <td>${b.pdf_url ? `<a href="${b.pdf_url}" target="_blank" rel="noopener">PDF</a>` : '<span class="muted">—</span>'}</td>
+        <td><button type="button" class="ghost del-book" data-id="${b.book_id}">Delete</button></td>
+      `;
+      tbody.appendChild(tr);
     }
+    tbody.querySelectorAll('.del-book').forEach((btn) => btn.addEventListener('click', async () => {
+      await api(`/api/books/${btn.dataset.id}`, { method: 'DELETE' });
+      await loadBooks();
+    }));
+  }
+
+  document.getElementById('book-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('book-msg');
+    msg.innerHTML = '';
+    const fd = new FormData();
+    fd.append('subjectId', val('b-subject'));
+    fd.append('grade', val('b-grade'));
+    fd.append('title', val('b-title'));
+    fd.append('book_type', val('b-type'));
+    const file = document.getElementById('b-pdf').files[0];
+    if (file) fd.append('pdf', file);
+    try {
+      await api('/api/books', { method: 'POST', body: fd });
+      msg.innerHTML = `<div class="success-msg">Book added.</div>`;
+      e.target.reset();
+      await loadBooks();
+    } catch (err) { msg.innerHTML = `<div class="error-msg">${err.message}</div>`; }
   });
 </script>

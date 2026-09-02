@@ -1,12 +1,15 @@
 const express = require('express');
 const db = require('../db/db');
 const { requireRole } = require('./auth');
+const { progressStatus } = require('./insights');
 
 const router = express.Router();
 
 router.get('/dashboard', requireRole('student'), (req, res) => {
   const studentId = req.session.user.id;
-  const student = db.prepare('SELECT student_id, firstname, lastname, grade, username FROM students WHERE student_id = ?').get(studentId);
+  const student = db
+    .prepare('SELECT student_id, firstname, lastname, grade, username, attendance_days FROM students WHERE student_id = ?')
+    .get(studentId);
 
   const subjects = db.prepare('SELECT subject_id, subject_name, subject_desc FROM subjects').all();
   const withLevels = subjects.map((s) => {
@@ -15,7 +18,8 @@ router.get('/dashboard', requireRole('student'), (req, res) => {
       .prepare('SELECT DISTINCT type FROM exercises WHERE subject_id = ?')
       .all(s.subject_id)
       .map((r) => r.type);
-    return { ...s, level: diff ? diff.level : 1, hasContent: availableTypes.length > 0, availableTypes };
+    const bookCount = db.prepare('SELECT COUNT(*) AS n FROM books WHERE subject_id = ? AND grade = ?').get(s.subject_id, student.grade).n;
+    return { ...s, level: diff ? diff.level : 1, hasContent: availableTypes.length > 0, availableTypes, bookCount };
   });
 
   const recentAttempts = db
@@ -24,7 +28,9 @@ router.get('/dashboard', requireRole('student'), (req, res) => {
     )
     .all(studentId);
 
-  res.json({ student, subjects: withLevels, recentAttempts });
+  const avg = db.prepare('SELECT AVG(score) AS a FROM activity_attempts WHERE student_id = ?').get(studentId).a;
+
+  res.json({ student, subjects: withLevels, recentAttempts, status: progressStatus(avg) });
 });
 
 module.exports = router;
