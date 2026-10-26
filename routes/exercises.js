@@ -35,11 +35,9 @@ function gradeFromScore(score) {
   return 'F';
 }
 
-function getOrCreateSession(req, studentId) {
+async function getOrCreateSession(req, studentId) {
   if (req.session.currentSessionId) return req.session.currentSessionId;
-  const sessionId = db
-    .prepare('INSERT INTO sessions (student_id, starttime) VALUES (?, ?)')
-    .run(studentId, new Date().toISOString()).lastInsertRowid;
+  const { session_id: sessionId } = await db.one('INSERT INTO sessions (student_id) VALUES ($1) RETURNING session_id', [studentId]);
   req.session.currentSessionId = sessionId;
   return sessionId;
 }
@@ -83,7 +81,7 @@ function scoreScramble(answer, word) {
   return Math.max(0, Math.round((1 - dist / w.length) * 100));
 }
 
-router.get('/next', requireRole('student'), (req, res) => {
+router.get('/next', requireRole('student'), async (req, res) => {
   const studentId = req.session.user.id;
   const subjectId = Number(req.query.subjectId);
   const type = req.query.type;
@@ -92,22 +90,22 @@ router.get('/next', requireRole('student'), (req, res) => {
     return res.status(400).json({ error: 'subjectId and a valid type are required.' });
   }
 
-  const diffRow = db
-    .prepare('SELECT level FROM student_difficulty WHERE student_id = ? AND subject_id = ?')
-    .get(studentId, subjectId);
+  const diffRow = await db.one('SELECT level FROM student_difficulty WHERE student_id = $1 AND subject_id = $2', [studentId, subjectId]);
   const level = diffRow ? diffRow.level : 1;
   const tier = snapToTier(level);
 
-  const candidates = db
-    .prepare('SELECT * FROM exercises WHERE subject_id = ? AND type = ? AND difficulty = ?')
-    .all(subjectId, type, tier);
+  const candidates = await db.all('SELECT * FROM exercises WHERE subject_id = $1 AND type = $2 AND difficulty = $3', [
+    subjectId,
+    type,
+    tier
+  ]);
 
   if (candidates.length === 0) {
     return res.status(404).json({ error: 'No content available for this subject/type/tier yet.' });
   }
 
   const picked = candidates[Math.floor(Math.random() * candidates.length)];
-  const content = JSON.parse(picked.content_json);
+  const content = picked.content_json; // JSONB — already parsed by pg
 
   // Don't leak the answer to the client. For choice-based types also shuffle the
   // choice order per-request — the authored content always lists the correct
@@ -148,14 +146,14 @@ function shuffleWord(word) {
   return scrambled === word ? shuffleWord(word) : scrambled;
 }
 
-router.post('/attempt', requireRole('student'), (req, res) => {
+router.post('/attempt', requireRole('student'), async (req, res) => {
   const studentId = req.session.user.id;
-  const { exerciseId, subjectId, answer, transcript, latencyMs, attempts } = req.body;
+  const { exerciseId, answer, transcript, latencyMs, attempts } = req.body;
 
-  const exercise = db.prepare('SELECT * FROM exercises WHERE exercise_id = ?').get(exerciseId);
+  const exercise = await db.one('SELECT * FROM exercises WHERE exercise_id = $1', [Number(exerciseId)]);
   if (!exercise) return res.status(404).json({ error: 'Exercise not found.' });
 
-  const content = JSON.parse(exercise.content_json);
+  const content = exercise.content_json;
   let score;
 
   if (CHOICE_TYPES.includes(exercise.type)) {
@@ -165,29 +163,29 @@ router.post('/attempt', requireRole('student'), (req, res) => {
     score = isCorrect ? scoreScrambleByAttempts(Math.max(1, Number(attempts) || 1)) : scoreScramble(answer, content.word);
   } else if (exercise.type === 'dictation') {
     score = scoreDictation(transcript, content.keywords);
-    db.prepare('INSERT INTO speechlogs (student_id, input_text, output_text, timestamp) VALUES (?, ?, ?, ?)').run(
+    await db.query('INSERT INTO speechlogs (student_id, input_text, output_text) VALUES ($1, $2, $3)', [
       studentId,
       content.story,
-      transcript || '',
-      new Date().toISOString()
-    );
+      transcript || ''
+    ]);
   } else {
     return res.status(400).json({ error: 'Unknown exercise type.' });
   }
 
-  const sessionId = getOrCreateSession(req, studentId);
+  const sessionId = await getOrCreateSession(req, studentId);
   const grade = gradeFromScore(score);
 
-  db.prepare(
-    'INSERT INTO activity_attempts (session_id, exercise_id, student_id, latency_ms, score, grade, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).run(sessionId, exerciseId, studentId, latencyMs || 0, score, grade, new Date().toISOString());
+  await db.query(
+    'INSERT INTO activity_attempts (session_id, exercise_id, student_id, latency_ms, score, grade) VALUES ($1, $2, $3, $4, $5, $6)',
+    [sessionId, exercise.exercise_id, studentId, Math.round(Number(latencyMs) || 0), score, grade]
+  );
 
-  db.prepare('UPDATE sessions SET endtime = ? WHERE session_id = ?').run(new Date().toISOString(), sessionId);
+  await db.query('UPDATE sessions SET endtime = now() WHERE session_id = $1', [sessionId]);
 
-  // Adaptive engine: rule-based difficulty adjustment.
-  const diffRow = db
-    .prepare('SELECT level FROM student_difficulty WHERE student_id = ? AND subject_id = ?')
-    .get(studentId, subjectId);
+  // Adaptive engine: rule-based difficulty adjustment. Uses the exercise's own
+  // subject rather than trusting the client-supplied subjectId.
+  const subjectId = exercise.subject_id;
+  const diffRow = await db.one('SELECT level FROM student_difficulty WHERE student_id = $1 AND subject_id = $2', [studentId, subjectId]);
   let level = diffRow ? diffRow.level : 1;
   const fastThreshold = FAST_LATENCY_MS[exercise.type];
   let direction = 'hold';
@@ -200,9 +198,10 @@ router.post('/attempt', requireRole('student'), (req, res) => {
     direction = 'down';
   }
 
-  db.prepare(
-    'INSERT INTO student_difficulty (student_id, subject_id, level) VALUES (?, ?, ?) ON CONFLICT(student_id, subject_id) DO UPDATE SET level = excluded.level'
-  ).run(studentId, subjectId, level);
+  await db.query(
+    'INSERT INTO student_difficulty (student_id, subject_id, level) VALUES ($1, $2, $3) ON CONFLICT (student_id, subject_id) DO UPDATE SET level = excluded.level',
+    [studentId, subjectId, level]
+  );
 
   let correctAnswer;
   if (CHOICE_TYPES.includes(exercise.type)) correctAnswer = content.answer;

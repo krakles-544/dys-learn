@@ -1,25 +1,42 @@
-const path = require('path');
-const fs = require('fs');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 
-const DB_PATH = path.join(__dirname, 'dyslearn.sqlite');
-const db = new Database(DB_PATH);
-db.pragma('foreign_keys = ON');
-
-const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-db.exec(schema);
-
-// Lightweight migrations: `CREATE TABLE IF NOT EXISTS` won't add new columns to a
-// table that already exists on disk (e.g. an older prototype DB, or an ephemeral
-// host that kept the file across a deploy). Add any missing columns by hand.
-function ensureColumn(table, column, definition) {
-  const cols = db.prepare(`PRAGMA table_info(${table})`).all();
-  if (!cols.some((c) => c.name === column)) {
-    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
-  }
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is not set. Copy .env.example to .env and fill it in (see README).');
 }
 
-ensureColumn('students', 'teacher_id', 'INTEGER REFERENCES teachers(teacher_id)');
-ensureColumn('students', 'attendance_days', 'INTEGER NOT NULL DEFAULT 0');
+const url = new URL(process.env.DATABASE_URL);
+const isLocal = ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
 
-module.exports = db;
+// Supabase requires TLS. Its certificates chain to Supabase's own CA rather than a
+// public one, so either pin that CA (download it from Project Settings → Database
+// and put the PEM in DATABASE_CA_CERT) or fall back to encrypted-but-unverified.
+let ssl = false;
+if (!isLocal) {
+  ssl = process.env.DATABASE_CA_CERT ? { ca: process.env.DATABASE_CA_CERT } : { rejectUnauthorized: false };
+}
+
+// Small pool: on Vercel every function instance gets its own pool, and Supabase's
+// transaction pooler (port 6543) multiplexes them onto real connections.
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl,
+  max: Number(process.env.DATABASE_POOL_MAX) || 3,
+  idleTimeoutMillis: 10000
+});
+
+pool.on('error', (err) => console.error('Idle Postgres client error:', err));
+
+async function query(sql, params) {
+  return pool.query(sql, params);
+}
+
+// First row or undefined.
+async function one(sql, params) {
+  return (await pool.query(sql, params)).rows[0];
+}
+
+async function all(sql, params) {
+  return (await pool.query(sql, params)).rows;
+}
+
+module.exports = { pool, query, one, all };

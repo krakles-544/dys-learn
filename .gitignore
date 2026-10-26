@@ -1,4 +1,7 @@
 node_modules/
-db/dyslearn.sqlite
 .env
+.vercel
+
+# Left over from the SQLite prototype; may hold pupil data, never commit.
+*.sqlite
 public/uploads/

@@ -2,6 +2,8 @@
 // badge and a rule-based (no real ML) "AI insight" sentence generated from a
 // pupil's attempt history. Both are deliberately simple and explainable.
 
+const db = require('../db/db');
+
 function progressStatus(avgScore) {
   if (avgScore == null) return { label: 'Not started', tone: 'neutral' };
   if (avgScore >= 80) return { label: 'Excellent', tone: 'good' };
@@ -28,16 +30,15 @@ const SUBJECT_TIP = {
   Science: 'point out plants, animals and weather on your walks and ask "why" questions'
 };
 
-function generateInsight(db, studentId) {
-  const rows = db
-    .prepare(
-      `SELECT a.score, e.type, sub.subject_name AS subject
-       FROM activity_attempts a
-       JOIN exercises e ON e.exercise_id = a.exercise_id
-       JOIN subjects sub ON sub.subject_id = e.subject_id
-       WHERE a.student_id = ?`
-    )
-    .all(studentId);
+async function generateInsight(studentId) {
+  const rows = await db.all(
+    `SELECT a.score, e.type, sub.subject_name AS subject
+     FROM activity_attempts a
+     JOIN exercises e ON e.exercise_id = a.exercise_id
+     JOIN subjects sub ON sub.subject_id = e.subject_id
+     WHERE a.student_id = $1`,
+    [studentId]
+  );
 
   if (rows.length < 3) {
     return 'Not enough activity yet to spot a pattern. Encourage the child to play a few learning games across different subjects this week.';
