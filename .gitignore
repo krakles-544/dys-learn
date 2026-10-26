@@ -6,3 +6,4 @@ supabase/.temp/
 # Left over from the SQLite prototype; may hold pupil data, never commit.
 *.sqlite
 public/uploads/
+.env.local
