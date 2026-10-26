@@ -1,6 +1,7 @@
 node_modules/
 .env
 .vercel
+supabase/.temp/
 
 # Left over from the SQLite prototype; may hold pupil data, never commit.
 *.sqlite
