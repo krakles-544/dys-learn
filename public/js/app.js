@@ -59,6 +59,7 @@ function renderTopbar({ portal, name, greetingWord = 'Hi' }) {
     </div>
   `;
   wireLogout('#logout');
+  if (window.mountThemeToggle) window.mountThemeToggle(el);
 }
 
 function escapeHtml(s) {

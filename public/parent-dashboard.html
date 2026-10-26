@@ -1,5 +1,6 @@
 <title>DysLearn — Parent Portal</title>
 <link rel="stylesheet" href="/css/style.css" />
+<script src="/js/theme.js"></script>
 
 <div id="topbar"></div>
 
@@ -66,7 +67,7 @@
       block.className = 'two-col';
       block.innerHTML = `
         <div class="card">
-          <h2 style="color:var(--violet-dark);">${escapeHtml(child.firstname)} ${escapeHtml(child.lastname)}</h2>
+          <h2 style="color:var(--violet-text);">${escapeHtml(child.firstname)} ${escapeHtml(child.lastname)}</h2>
           <p class="muted">Grade Level: <strong>Grade ${child.grade}</strong> · Reg. ${escapeHtml(child.regno)}</p>
 
           <div class="stat-row" style="margin:14px 0;">
